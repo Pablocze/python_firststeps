@@ -1,1 +1,1 @@
-# python_firststeps
+# Repository for training
