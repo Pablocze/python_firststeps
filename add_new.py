@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest
-from group_add_new import Group
+from group import Group
 
 class Addnew(unittest.TestCase):
     def setUp(self):
@@ -29,35 +29,35 @@ class Addnew(unittest.TestCase):
     def return_home_page(self, wd):
         wd.find_element_by_link_text("home page").click()
 
-    def fill_form(self, wd, group_add_new):
+    def fill_form(self, wd, group):
         # fill contact form
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
-        wd.find_element_by_name("firstname").send_keys(group_add_new.firstname)
+        wd.find_element_by_name("firstname").send_keys(group.firstname)
         wd.find_element_by_name("middlename").click()
         wd.find_element_by_name("middlename").clear()
-        wd.find_element_by_name("middlename").send_keys(group_add_new.middlename)
+        wd.find_element_by_name("middlename").send_keys(group.middlename)
         wd.find_element_by_name("lastname").click()
         wd.find_element_by_name("lastname").clear()
-        wd.find_element_by_name("lastname").send_keys(group_add_new.name)
+        wd.find_element_by_name("lastname").send_keys(group.name)
         wd.find_element_by_name("address").click()
         wd.find_element_by_name("address").clear()
-        wd.find_element_by_name("address").send_keys(group_add_new.adress)
+        wd.find_element_by_name("address").send_keys(group.adress)
         wd.find_element_by_name("mobile").click()
         wd.find_element_by_name("mobile").clear()
-        wd.find_element_by_name("mobile").send_keys(group_add_new.mobilenumber)
+        wd.find_element_by_name("mobile").send_keys(group.mobilenumber)
         wd.find_element_by_name("email").click()
         wd.find_element_by_name("email").clear()
-        wd.find_element_by_name("email").send_keys(group_add_new.email)
+        wd.find_element_by_name("email").send_keys(group.email)
         wd.find_element_by_name("bday").click()
-        Select(wd.find_element_by_name("bday")).select_by_visible_text(group_add_new.day)
+        Select(wd.find_element_by_name("bday")).select_by_visible_text(group.day)
         wd.find_element_by_css_selector("option[value=\"1\"]").click()
         wd.find_element_by_name("bmonth").click()
-        Select(wd.find_element_by_name("bmonth")).select_by_visible_text(group_add_new.month)
+        Select(wd.find_element_by_name("bmonth")).select_by_visible_text(group.month)
         wd.find_element_by_css_selector("option[value=\"January\"]").click()
         wd.find_element_by_name("byear").click()
         wd.find_element_by_name("byear").clear()
-        wd.find_element_by_name("byear").send_keys(group_add_new.year)
+        wd.find_element_by_name("byear").send_keys(group.year)
         # submit contact creation
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
 
