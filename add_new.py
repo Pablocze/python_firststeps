@@ -14,7 +14,6 @@ class Addnew(unittest.TestCase):
     
     def test_addnew(self):
         wd = self.wd
-        self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
         self.contact_creation(wd)
         self.fill_form(wd, Contact(firstname="Pawe", middlename="Piotr", name="Wrob", adress="alko street 5", mobilenumber="123123124",
@@ -65,6 +64,7 @@ class Addnew(unittest.TestCase):
         wd.find_element_by_link_text("add new").click()
 
     def login(self, wd, username, password):
+        self.open_home_page(wd)
         wd.find_element_by_name("user").click()
         wd.find_element_by_name("user").clear()
         wd.find_element_by_name("user").send_keys(username)
