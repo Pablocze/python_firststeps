@@ -1,21 +1,9 @@
-from selenium import webdriver
-from fixture.session2 import SessionHelper
-from fixture.contact import ContactHelper
-
-class Kontakt:
-    def __init__(self):
-        self.wd = webdriver.Firefox()
-        self.wd.implicitly_wait(30)
-        self.session2 = SessionHelper(self)
-        self.contact = ContactHelper(self)
-
-
-    def return_home_page(self):
-        wd = self.wd
-        wd.find_element_by_link_text("home page").click()
+class ContactHelper:
+    def __init__(self, kon):
+        self.kon = kon
 
     def fill_form(self, contact):
-        wd = self.wd
+        wd = self.kon.wd
         # fill contact form
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
@@ -44,18 +32,9 @@ class Kontakt:
         wd.find_element_by_name("byear").send_keys(contact.year)
         # submit contact creation
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
-        self.return_home_page()
+        self.kon.return_home_page()
 
-    def contact_creation(self):
-        wd = self.wd
-        self.open_home_page()
+    def creation(self):
+        wd = self.kon.wd
+        self.kon.open_home_page()
         wd.find_element_by_link_text("add new").click()
-
-
-
-    def open_home_page(self):
-        wd = self.wd
-        wd.get("http://localhost/addressbook/index.php")
-
-    def destroy(self):
-        self.wd.quit()

@@ -13,7 +13,7 @@ def kon(request):
 
 def test_addnew(kon):
         kon.session2.login(username="admin", password="secret")
-        kon.contact_creation()
-        kon.fill_form(Contact(firstname="Pawe", middlename="Piotr", name="Wrob", adress="alko street 5",
+        kon.contact.creation()
+        kon.contact.fill_form(Contact(firstname="Pawe", middlename="Piotr", name="Wrob", adress="alko street 5",
         mobilenumber="123123124",email="pab@mail.com", day="1", month="January", year="2000"))
         kon.session2.logout()
