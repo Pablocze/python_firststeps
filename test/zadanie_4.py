@@ -13,17 +13,17 @@ def app(request):
 
 def test_task1(app):
         app.session.login(username="admin", password="secret")
-        app.group_creation(Group(name="name", header="noidea", footer="whatimdoing"))
+        app.group.creation(Group(name="name", header="noidea", footer="whatimdoing"))
         app.session.logout()
 
 
 def test_empty(app):
     app.session.login(username="admin", password="secret")
-    app.group_creation(Group(name="", header="", footer=""))
+    app.group.creation(Group(name="", header="", footer=""))
     app.session.logout()
 
 
 def test_signs(app):
     app.session.login(username="admin", password="secret")
-    app.group_creation(Group(name="!#@#%%^^#$^", header="@#%#&$$*(!", footer="@%$#^%&**(%^^&%@!$!@"))
+    app.group.creation(Group(name="!#@#%%^^#$^", header="@#%#&$$*(!", footer="@%$#^%&**(%^^&%@!$!@"))
     app.session.logout()
