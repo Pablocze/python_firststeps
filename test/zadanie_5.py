@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 from model.contact import Contact
-from fixture.kontakt import Kontakt
-import pytest
 
 
-@pytest.fixture
-def kon(request):
-    fixture = Kontakt()
-    request.addfinalizer(fixture.destroy)
-    return fixture
+def test_add_contact(app):
+    app.session.login(username="admin", password="secret")
+    app.contact.create(
+        Contact(firstname="Anna", lastname="Nowak", title="miss", mobile="692444520", email="anna@interia.pl",
+                address="ul. Nowa 1, Katowice"))
+    app.session.logout()
 
 
-def test_addnew(kon):
-        kon.session2.login(username="admin", password="secret")
-        kon.contact.creation()
-        kon.contact.fill_form(Contact(firstname="Pawe", middlename="Piotr", name="Wrob", adress="alko street 5",
-        mobilenumber="123123124",email="pab@mail.com", day="1", month="January", year="2000"))
-        kon.session2.logout()
+def test_add_empty_contact(app):
+    app.session.login(username="admin", password="secret")
+    app.contact.create(Contact(firstname="", lastname="", title="", mobile="", email="", address=""))
+    app.session.logout()
