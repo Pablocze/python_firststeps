@@ -22,6 +22,7 @@ def test_empty(app):
     app.group_creation(Group(name="", header="", footer=""))
     app.logout()
 
+
 def test_signs(app):
     app.login(username="admin", password="secret")
     app.group_creation(Group(name="!#@#%%^^#$^", header="@#%#&$$*(!", footer="@%$#^%&**(%^^&%@!$!@"))
