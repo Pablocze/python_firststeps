@@ -12,18 +12,18 @@ def app(request):
 
 
 def test_task1(app):
-        app.login(username="admin", password="secret")
+        app.session.login(username="admin", password="secret")
         app.group_creation(Group(name="name", header="noidea", footer="whatimdoing"))
-        app.logout()
+        app.session.logout()
 
 
 def test_empty(app):
-    app.login(username="admin", password="secret")
+    app.session.login(username="admin", password="secret")
     app.group_creation(Group(name="", header="", footer=""))
-    app.logout()
+    app.session.logout()
 
 
 def test_signs(app):
-    app.login(username="admin", password="secret")
+    app.session.login(username="admin", password="secret")
     app.group_creation(Group(name="!#@#%%^^#$^", header="@#%#&$$*(!", footer="@%$#^%&**(%^^&%@!$!@"))
-    app.logout()
+    app.session.logout()

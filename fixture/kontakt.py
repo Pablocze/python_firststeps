@@ -1,10 +1,11 @@
 from selenium import webdriver
+from fixture.session2 import SessionHelper
 
 class Kontakt:
     def __init__(self):
         self.wd = webdriver.Firefox()
         self.wd.implicitly_wait(30)
-
+        self.session2 = SessionHelper(self)
     def logout(self):
         wd = self.wd
         wd.find_element_by_link_text("Logout").click()
