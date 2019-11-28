@@ -2,14 +2,11 @@
 from model.contact import Contact
 
 
-
 def test_add_contact(app):
-        app.session.login(username="admin", password="secret")
-        app.contact.create(Contact(firstname="Paw", lastname="Cze", title="awwww", mobile="123456789", email="aaa@wpa.pl", address="adress"))
-        app.session.logout()
+    app.contact.create(
+        Contact(firstname="Paw", lastname="Alk", title="mr", mobile="123123123", email="paw@vp.pl",
+                address="ul. zamkowa"))
 
 
 def test_add_empty_contact(app):
-        app.session.login(username="admin", password="secret")
-        app.contact.create(Contact(firstname="", lastname="", title="", mobile="", email="", address=""))
-        app.session.logout()
+    app.contact.create(Contact(firstname="", lastname="", title="", mobile="", email="", address=""))
