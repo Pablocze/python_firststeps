@@ -1,5 +1,7 @@
-from selenium.webdriver.support.ui import Select
-from model.contact import Contact
+import time
+
+from model.user import Contact
+import re
 
 
 class ContactHelper:
@@ -7,121 +9,112 @@ class ContactHelper:
     def __init__(self, app):
         self.app = app
 
-    def count(self):
+    def fill_contact(self, contact):
+        self.app.change_field_value("firstname", contact.firstname)
+        self.app.change_field_value("lastname", contact.lastname)
+        self.app.change_field_value("company", contact.companyname)
+        self.app.change_field_value("address", contact.address)
+        self.app.change_field_value("home", contact.homephone)
+        self.app.change_field_value("mobile", contact.mobilephone)
+        self.app.change_field_value("work", contact.workphone)
+        self.app.change_field_value("email", contact.email1)
+        self.app.change_field_value("email2", contact.email2)
+        self.app.change_field_value("email3", contact.email3)
+
+    def create(self, user):
         wd = self.app.wd
-        self.open_home_page()
-        return len(wd.find_elements_by_xpath("//img[@alt='Edit']"))
-
-    def create(self, Contact, Date1, Date2):
-        self.open_page_create_contact()
-        self.fill_main_info(Contact)
-        self.fill_bday(Date1)
-        self.fill_aday(Date2)
-        self.fill_address()
-        self.submit()
-        self.contact_cache = None
-
-    def change_value_field(self, field, text):
-        wd = self.app.wd
-        if text is not None:
-            wd.find_element_by_name(field).click()
-            wd.find_element_by_name(field).clear()
-            wd.find_element_by_name(field).send_keys(text)
-
-
-    def fill_main_info(self, Contact):
-        self.change_value_field("firstname", Contact.firstname)
-        self.change_value_field("middlename", Contact.middlename)
-        self.change_value_field("lastname", Contact.lastname)
-        self.change_value_field("nickname", Contact.nickname)
-        self.change_value_field("title", Contact.title)
-        self.change_value_field("company", Contact.company)
-        self.change_value_field("email", Contact.email)
-
-    def fill_bday(self, Date):
-        wd = self.app.wd
-        wd.find_element_by_name("bday").click()
-        Select(wd.find_element_by_name("bday")).select_by_visible_text(Date.day)
-        wd.find_element_by_name("bday").click()
-        wd.find_element_by_name("bmonth").click()
-        Select(wd.find_element_by_name("bmonth")).select_by_visible_text(Date.month)
-        wd.find_element_by_name("bmonth").click()
-        wd.find_element_by_name("byear").click()
-        wd.find_element_by_name("byear").clear()
-        wd.find_element_by_name("byear").send_keys(Date.year)
-
-    def fill_aday(self,Date):
-        wd = self.app.wd
-        wd.find_element_by_name("aday").click()
-        Select(wd.find_element_by_name("aday")).select_by_visible_text(Date.day)
-        wd.find_element_by_name("aday").click()
-        wd.find_element_by_name("amonth").click()
-        Select(wd.find_element_by_name("amonth")).select_by_visible_text(Date.month)
-        wd.find_element_by_name("amonth").click()
-        wd.find_element_by_name("ayear").click()
-        wd.find_element_by_name("ayear").clear()
-        wd.find_element_by_name("ayear").send_keys(Date.year)
-
-    def fill_address(self):
-        wd = self.app.wd
-        wd.find_element_by_name("address2").click()
-        wd.find_element_by_name("address2").clear()
-        wd.find_element_by_name("address2").send_keys("0")
-
-    def submit(self):
-        wd = self.app.wd
+        self.app.open_home_page()
+        wd.find_element_by_link_text("add new").click()
+        self.fill_contact(user)
         wd.find_element_by_xpath("(//input[@name='submit'])[2]").click()
+        self.contacts_cache = None
 
-    def open_page_create_contact(self):
+    def modify_user_by_index(self, user, index):
         wd = self.app.wd
-        if not (wd.current_url.endswith("/edit.php") and len(wd.find_elements_by_name("submit"))>0):
-            wd.find_element_by_link_text("add new").click()
+        self.app.open_home_page()
+        self.user_line_selected(index).find_element_by_xpath(".//img[@alt='Edit']").click()
+        self.fill_contact(user)
+        wd.find_element_by_xpath("(//input[@name='update'])[2]").click()
+        self.contacts_cache = None
 
-    def delete_first_contact(self):
-        self.delete_contact_by_index(0)
-
-    def delete_contact_by_index(self, index):
+    def open_user_view_by_index(self, index):
         wd = self.app.wd
-        self.open_home_page()
-        wd.find_elements_by_name("selected[]")[index].click()
+        self.app.open_home_page()
+        self.user_line_selected(index).find_element_by_xpath(".//img[@alt='Details']").click()
+
+    def user_line_selected(self, index):
+        wd = self.app.wd
+        self.app.open_home_page()
+        return wd.find_elements_by_name("entry")[index]
+
+    def delete_user_by_index(self, index):
+        wd = self.app.wd
+        self.app.open_home_page()
+        self.user_line_selected(index).find_element_by_name("selected[]").click()
+        # sleeps are added to improve stability
+        time.sleep(1)
+        # submit deletion
         wd.find_element_by_xpath("//input[@value='Delete']").click()
-        wd.switch_to_alert().accept()
-        self.open_home_page()
-        self.contact_cache = None
+        time.sleep(1)
+        wd.switch_to.alert.accept()
+        time.sleep(1)
+        self.contacts_cache = None
 
-    def edit_first_contact(self, Contact, Date1, Date2):
-        self.edit_first_contact(0, Contact, Date1, Date2)
-
-    def edit_contact_by_index(self, index, Contact, Date1, Date2):
+    def count(self):
+        # quantity of contacts
         wd = self.app.wd
-        self.open_home_page()
-        wd.find_elements_by_xpath("//img[@alt='Edit']")[index].click()
-        self.fill_main_info(Contact)
-        self.fill_bday(Date1)
-        self.fill_aday(Date2)
-        self.fill_address()
-        wd.find_element_by_name("update").click()
-        wd.find_element_by_link_text("home page").click()
-        self.open_home_page()
-        self.contact_cache = None
+        self.app.open_home_page()
+        return len(wd.find_elements_by_name("entry"))
 
-    def open_home_page(self):
-        wd = self.app.wd
-        if not (wd.current_url.endswith("/index.php") or wd.current_url.endswith("/addressbook")):
-        #if len(wd.find_elements_by_name("Delete")) < 0:
-            wd.find_element_by_link_text("home").click()
+    contacts_cache = None
 
-    contact_cache = None
-
-    def get_contact_list(self):
-        if self.contact_cache is None:
+    def get_contacts_list_from_table(self):
+        if self.contacts_cache is None:
             wd = self.app.wd
-            self.open_home_page()
-            self.contact_cache = []
-            for element in wd.find_elements_by_xpath("//tr[@name='entry']"):
-                cells = element.find_elements_by_tag_name("td")
-                id = element.find_element_by_name("selected[]").get_attribute("id")
+            self.app.open_home_page()
+            self.contacts_cache = []
+            for row in wd.find_elements_by_name("entry"):
+                cells = row.find_elements_by_tag_name("td")
+                id = cells[0].find_element_by_tag_name("input").get_attribute("value")
                 lastname = cells[1].text
                 firstname = cells[2].text
-                self.contact_cache.append(Contact(firstname = firstname, lastname = lastname, id = id))
-        return list(self.contact_cache)
+                address = cells[3].text
+                all_emails = cells[4].text
+                all_phones = cells[5].text
+                scanned_contact = Contact(firstname=firstname, lastname=lastname, id=id, address=address,
+                                          all_phones_from_homepage=all_phones, all_emails_from_homepage=all_emails)
+                self.contacts_cache.append(scanned_contact)
+        return list(self.contacts_cache)
+
+    def get_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.user_line_selected(index).find_element_by_xpath(".//img[@alt='Edit']").click()
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        address = wd.find_element_by_name("address").get_attribute("value")
+        homephone = wd.find_element_by_name("home").get_attribute("value")
+        workphone = wd.find_element_by_name("work").get_attribute("value")
+        mobilephone = wd.find_element_by_name("mobile").get_attribute("value")
+        email1 = wd.find_element_by_name("email").get_attribute("value")
+        email2 = wd.find_element_by_name("email2").get_attribute("value")
+        email3 = wd.find_element_by_name("email3").get_attribute("value")
+        return Contact(firstname=firstname, lastname=lastname, id=id, address=address,
+                       homephone=homephone, mobilephone=mobilephone, workphone=workphone,
+                       email1=email1, email2=email2, email3=email3)
+
+    def get_phones_info_from_view_page(self, index):
+        wd = self.app.wd
+        self.open_user_view_by_index(index)
+        full_text = wd.find_element_by_id("content").text
+        homephone = ""
+        if re.search("H: (.*)", full_text) is not None:
+            homephone = re.search("H: (.*)", full_text).group(1)
+        workphone = ""
+        if re.search("W: (.*)", full_text) is not None:
+            workphone = re.search("W: (.*)", full_text).group(1)
+        mobilephone = ""
+        if re.search("M: (.*)", full_text) is not None:
+            mobilephone = re.search("M: (.*)", full_text).group(1)
+        return Contact(homephone=homephone, mobilephone=mobilephone,
+                       workphone=workphone)
