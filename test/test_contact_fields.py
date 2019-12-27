@@ -4,7 +4,7 @@ import re
 
 def test_contact_fields_on_homepage_vs_edit_page(app):
     contact_list = app.contact.get_contacts_list_from_table()
-    # задаем случайный номер контакта
+
     index = random.randrange(len(contact_list))
     homepage_contact = contact_list[index]
     edit_page_contact = app.contact.get_contact_info_from_edit_page(index)

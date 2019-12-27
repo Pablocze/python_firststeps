@@ -1,6 +1,5 @@
+# -*- coding: utf-8 -*-
 from model.group import Group
-
-
 class GroupHelper:
 
     def __init__(self, app):
@@ -107,3 +106,11 @@ class GroupHelper:
         wd = self.app.wd
         self.open_groups_page()
         wd.find_element_by_css_selector("input[value='%s']" % id).click()
+
+    def groups_without_empty_names(self, groups):
+        # Уберем из списка группы, куда уже нельзя добавить юзеров.Также группы с пустыми именами, из-за глюка с ними
+        len_before = len(groups)
+        for gr in range(len_before):
+            if self.app.clear(groups[len_before-gr-1].name) == "":
+                groups.pop(len_before-gr-1)
+        return groups
